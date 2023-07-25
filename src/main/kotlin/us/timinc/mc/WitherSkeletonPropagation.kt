@@ -12,9 +12,9 @@ object WitherSkeletonPropagation : ModInitializer {
 	override fun onInitialize() {
 		ServerLivingEntityEvents.ALLOW_DEATH.register{ deadEntity, damageSource, flt ->
 			if (damageSource.typeRegistryEntry.key.get() == DamageTypes.WITHER && deadEntity is SkeletonEntity) {
-				var world = deadEntity.world
+				val world = deadEntity.world
 				deadEntity.remove(Entity.RemovalReason.DISCARDED)
-				var newEntity = WitherSkeletonEntity(EntityType.WITHER_SKELETON, world)
+				val newEntity = WitherSkeletonEntity(EntityType.WITHER_SKELETON, world)
 				newEntity.setPosition(deadEntity.pos)
 				world.spawnEntity(newEntity)
 				return@register false
