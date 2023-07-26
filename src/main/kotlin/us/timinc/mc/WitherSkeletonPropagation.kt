@@ -14,15 +14,15 @@ object WitherSkeletonPropagation : ModInitializer {
 		ServerLivingEntityEvents.ALLOW_DEATH.register{ deadEntity, damageSource, _ ->
 			val world = deadEntity.world
 			if (world.isClient) return@register true
-			val serverWorld = world as ServerWorld
-			if (damageSource.typeRegistryEntry.key.get() == DamageTypes.WITHER && deadEntity is SkeletonEntity) {
+
+			val serverWorld = world as? ServerWorld ?: return@register true
+			if (damageSource.typeRegistryEntry.key.get() == DamageTypes.WITHER && deadEntity.type == EntityType.SKELETON) {
 				val newEntity = EntityType.WITHER_SKELETON.spawn(serverWorld, deadEntity.blockPos, SpawnReason.CONVERSION)!!
 				newEntity.bodyYaw = deadEntity.bodyYaw
 				newEntity.headYaw = deadEntity.headYaw
 				deadEntity.remove(Entity.RemovalReason.DISCARDED)
-				return@register false
-			}
-			return@register true
+				false
+			} else true
 		}
 	}
 }
