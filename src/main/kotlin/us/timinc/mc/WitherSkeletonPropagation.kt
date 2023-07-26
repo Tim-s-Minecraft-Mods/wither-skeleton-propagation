@@ -4,19 +4,22 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
+import net.minecraft.entity.SpawnReason
 import net.minecraft.entity.damage.DamageTypes
 import net.minecraft.entity.mob.SkeletonEntity
-import net.minecraft.entity.mob.WitherSkeletonEntity
+import net.minecraft.server.world.ServerWorld
 
 object WitherSkeletonPropagation : ModInitializer {
 	override fun onInitialize() {
-		ServerLivingEntityEvents.ALLOW_DEATH.register{ deadEntity, damageSource, flt ->
+		ServerLivingEntityEvents.ALLOW_DEATH.register{ deadEntity, damageSource, _ ->
+			val world = deadEntity.world
+			if (world.isClient) return@register true
+			val serverWorld = world as ServerWorld
 			if (damageSource.typeRegistryEntry.key.get() == DamageTypes.WITHER && deadEntity is SkeletonEntity) {
-				val world = deadEntity.world
+				val newEntity = EntityType.WITHER_SKELETON.spawn(serverWorld, deadEntity.blockPos, SpawnReason.CONVERSION)!!
+				newEntity.bodyYaw = deadEntity.bodyYaw
+				newEntity.headYaw = deadEntity.headYaw
 				deadEntity.remove(Entity.RemovalReason.DISCARDED)
-				val newEntity = WitherSkeletonEntity(EntityType.WITHER_SKELETON, world)
-				newEntity.setPosition(deadEntity.pos)
-				world.spawnEntity(newEntity)
 				return@register false
 			}
 			return@register true
