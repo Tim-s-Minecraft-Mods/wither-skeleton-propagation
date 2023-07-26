@@ -5,7 +5,7 @@
 	"name": "Wither Skeleton Propagation",
 	"description": "When a Skeleton dies to the Wither effect, it turns into a Wither Skeleton.",
 	"authors": [
-		"Me!"
+		"Timothy Metcalfe aka TimInc"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
